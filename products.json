@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "M26 Super Pershing", "price": 999.99, "image": "Super Pershing.jpg" },
+  { "id": 2, "name": "M109A1", "price": 249.99, "image": "M109A1.jpg" },
+  { "id": 3, "name": "ERA", "price": 29.99, "image": "ERA Blocks.jpg" },
+  { "id": 4, "name": "120mm APFSDS", "price": 49.99, "image": "120mm APFSDS.jpg" },
+  { "id": 5, "name": "Composite Tracks", "price": 199.00, "image": "Tracks.jpg" },
+  { "id": 6, "name": "Reactive Armor Kit", "price": 349.50, "image": "Reactive Armor.jpg" },
+  { "id": 7, "name": "Thermal Sight", "price": 1299.99, "image": "Thermal Sight.jpg" },
+  { "id": 8, "name": "Commander's Cupola", "price": 89.99, "image": "Cupola.jpg" },
+  { "id": 9, "name": "Engine Overhaul Kit", "price": 799.49, "image": "Engine Kit.jpg" },
+  { "id": 10, "name": "Camouflage Netting", "price": 24.99, "image": "Camouflage Net.jpg" }
+]

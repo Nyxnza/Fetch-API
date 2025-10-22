@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Military Grade Shop</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;background:#f7f7f7}
+    header{background:#222;color:#fff;padding:12px 16px;text-align:center}
+    .container{max-width:1000px;margin:24px auto;padding:0 16px}
+    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+    .card{background:#fff;border:1px solid #e1e1e1;border-radius:8px;padding:12px;display:flex;flex-direction:column;align-items:center}
+    .card img{width:150px;height:150px;object-fit:cover}
+    .card h3{margin:8px 0 4px;font-size:18px}
+    .card .price{color:#0a7;font-weight:700;margin-bottom:8px}
+    .card button{background:#0078d4;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .cart{position:fixed;right:16px;top:72px;width:320px;background:#fff;border:1px solid #ddd;padding:12px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+    .cart h4{margin:0 0 8px}
+    .cart .item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #eee}
+    .actions{display:flex;gap:8px}
+    footer{height:48px;background:#222;color:#fff;display:flex;align-items:center;justify-content:center;margin-top:48px}
+    .empty{color:#666;text-align:center;padding:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simple Fetch Shop</h1>
+  </header>
+  <div class="container">
+    <div id="products" class="products">Loading products...</div>
+  </div>
+
+  <aside id="cart" class="cart">
+    <h4>Your Cart</h4>
+    <div id="cart-items" class="cart-items"></div>
+    <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+      <strong>Total:</strong>
+      <strong id="cart-total">$0.00</strong>
+    </div>
+    <div style="margin-top:12px" class="actions">
+      <button id="clear-cart" style="flex:1;padding:8px">Clear</button>
+      <button id="checkout" style="flex:1;padding:8px;background:#0a7;color:#fff;border:none">Checkout</button>
+    </div>
+  </aside>
+  <footer>Quick demo shop — Fetch API</footer>
+
+  <script>
+    // Fetch products.json and render
+    const productsEl = document.getElementById('products');
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const clearBtn = document.getElementById('clear-cart');
+    const checkoutBtn = document.getElementById('checkout');
+
+    let products = [];
+    let cart = {};
+
+    function formatPrice(n){return '$' + n.toFixed(2)}
+
+    function renderProducts(){
+      productsEl.innerHTML = '';
+      products.forEach(p=>{
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <div class="price">${formatPrice(p.price)}</div>
+          <button data-id="${p.id}">Add to cart</button>
+        `;
+        productsEl.appendChild(div);
+      });
+      // attach handlers
+      productsEl.querySelectorAll('button[data-id]').forEach(b=>{
+        b.addEventListener('click', ()=> addToCart(Number(b.dataset.id)));
+      });
+    }
+
+    function addToCart(id){
+      const p = products.find(x=>x.id===id);
+      if(!p) return;
+      cart[id] = (cart[id]||0)+1;
+      renderCart();
+    }
+
+    function renderCart(){
+      cartItemsEl.innerHTML = '';
+      const ids = Object.keys(cart);
+      if(ids.length===0){cartItemsEl.innerHTML = '<div class="empty">Cart is empty</div>';cartTotalEl.textContent = '$0.00';return}
+      let total = 0;
+      ids.forEach(id=>{
+        const qty = cart[id];
+        const p = products.find(x=>x.id==id);
+        const row = document.createElement('div');
+        row.className = 'item';
+        row.innerHTML = `<div>${p.name} x${qty}</div><div>${formatPrice(p.price*qty)}</div>`;
+        cartItemsEl.appendChild(row);
+        total += p.price*qty;
+      });
+      cartTotalEl.textContent = formatPrice(total);
+    }
+
+    clearBtn.addEventListener('click', ()=>{cart={};renderCart()});
+
+    checkoutBtn.addEventListener('click', ()=>{
+      if(Object.keys(cart).length===0){alert('Cart empty');return}
+      alert('Checkout simulated — total: ' + cartTotalEl.textContent);
+      cart = {};
+      renderCart();
+    });
+
+    // Load products via fetch
+    fetch('products.json')
+      .then(r=>{
+        if(!r.ok) throw new Error('Failed to load products.json — run with a local server');
+        return r.json();
+      })
+      .then(data=>{products=data;renderProducts();renderCart();})
+      .catch(err=>{productsEl.innerHTML = '<div class="empty">Could not load products (serve files using a local web server).<br>'+err.message+'</div>'});
+  </script>
+</body>
+</html>
